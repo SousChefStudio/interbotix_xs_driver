@@ -18,22 +18,23 @@ defaults:
 jobs:
   build-ros2:
     strategy:
+      fail-fast: false
       matrix:
         env:
-          - {ROS_DISTRO: galactic, ROS_REPO: main}
-          - {ROS_DISTRO: humble, ROS_REPO: main}
-          - {ROS_DISTRO: rolling, ROS_REPO: main}
-    runs-on: ubuntu-latest
+          - {ROS_DISTRO: humble, RUNNER: ubuntu-22.04}
+          - {ROS_DISTRO: iron, RUNNER: ubuntu-22.04}
+          - {ROS_DISTRO: jazzy, RUNNER: ubuntu-24.04}
+          - {ROS_DISTRO: rolling, RUNNER: ubuntu-24.04}
+
+    runs-on: ${{ matrix.env.RUNNER }}
     steps:
       - name: Check out X-Series Driver
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - uses: ros-tooling/setup-ros@v0.7
         with:
-          path: src
-      - name: Check out DYNAMIXEL Workbench Toolbox
-        uses: actions/checkout@v3
+          use-ros2-testing: true
+          required-ros-distributions: ${{ matrix.env.ROS_DISTRO }}
+      - uses: ros-tooling/action-ros-ci@v0.3
         with:
-          repository: Interbotix/dynamixel-workbench
-          ref: ros2
-          path: src
-      - uses: 'ros-industrial/industrial_ci@master'
-        env: ${{matrix.env}}
+          target-ros2-distro: ${{ matrix.env.ROS_DISTRO }}
+          vcs-repo-file-url: dependencies.repos
