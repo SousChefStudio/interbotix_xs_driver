@@ -31,13 +31,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <memory>
+#include <chrono>
 #include <cstdarg>
 #include <cstdio>
+#include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 
 namespace interbotix_xs
@@ -80,6 +81,14 @@ void log(logging::Level level, const char * fmt, ...)
       default:
         break;
     }
+
+    auto duration = std::chrono::system_clock::now().time_since_epoch();
+    double seconds = std::chrono::duration<double>(duration).count();
+
+    msg = msg +
+      " [" +
+      std::to_string(seconds) +
+      "] ";
 
     va_list args;
     va_start(args, fmt);
