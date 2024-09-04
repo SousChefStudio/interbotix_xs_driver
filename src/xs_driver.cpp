@@ -1121,9 +1121,13 @@ bool InterbotixDriverXS::load_motor_configs()
   for (auto const & motor_info : motor_info_vec) {
     if (!dxl_wb.itemWrite(motor_info.motor_id, motor_info.reg.c_str(), motor_info.value)) {
       XSLOG_FATAL(
-        "Failed to write value[%d] on items[%s] to [ID : %2.d]",
+        "Failed to write value[%d] on items[%s] to [ID: %2.d]",
         motor_info.value, motor_info.reg.c_str(), motor_info.motor_id);
       wrote_all_configs = false;
+    } else {
+      XSLOG_DEBUG(
+        "Succeeded to write value[%d] on items[%s] to [ID: %2.d]",
+        motor_info.value, motor_info.reg.c_str(), motor_info.motor_id);
     }
   }
   return wrote_all_configs;
